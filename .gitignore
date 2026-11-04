@@ -1,0 +1,6 @@
+bin/
+pgdata/
+.pgdata/
+.server.pid
+*.log.tmp
+.DS_Store

@@ -1,0 +1,11 @@
+t= 2.015s  report    BEGIN; SELECT count(*) FROM accounts -> 10000 rows; now idle in transaction for 8s
+t= 3.011s  migration SET lock_timeout = '200ms'
+t= 3.216s  migration attempt 1: canceling statement due to lock timeout (55P03). retry in 345ms
+t= 3.765s  migration attempt 2: canceling statement due to lock timeout (55P03). retry in 551ms
+t= 4.519s  migration attempt 3: canceling statement due to lock timeout (55P03). retry in 1.003s
+t= 5.015s  snapshot  wrote results/fixed-pg_stat_activity.txt
+t= 5.725s  migration attempt 4: canceling statement due to lock timeout (55P03). retry in 2.062s
+t= 7.990s  migration attempt 5: canceling statement due to lock timeout (55P03). retry in 2.017s
+t=10.017s  report    COMMIT (ACCESS SHARE released)
+t=10.022s  migration attempt 6: done in 13ms. total 7.011s
+t=14.017s  summary   mode=fixed  requests=21275  worst second=t3 with 988 ok  slowest request=203ms  csv=results/fixed-api.csv

@@ -1,0 +1,19 @@
+./scripts/demo.sh: line 7: 25342 Terminated: 15          ./bin/server -addr "$ADDR" -dsn "$DSN" > results/server.log 2>&1
+       23.42 real        13.35 user         9.59 sys
+            26193920  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              139355  page reclaims
+                 479  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+              339350  messages sent
+              338870  messages received
+                1934  signals received
+                 609  voluntary context switches
+              681820  involuntary context switches
+            67484713  instructions retired
+            71934350  cycles elapsed
+              704512  peak memory footprint

@@ -1,0 +1,17 @@
+mode=naive rate=20/s load=20s slowdown=6s..9s (db work 20ms -> 500ms)
+client requests      400
+client attempts      941
+edge received        941
+api received         2563
+db received          7371
+amplification at db  18.4x
+success rate         32.5%
+latency all   p50 3200ms  p99 3205ms
+latency ok    p50 23ms  p99 992ms
+peak db rps          758
+db work finished for a caller that had left  3200
+db rejected (queue full)                     4036
+db dropped (deadline passed)                 0
+duplicate writes applied                     641
+circuit breaker opened                       0 times, 0 fast fails
+recovery             did not recover before load stopped

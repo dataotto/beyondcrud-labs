@@ -1,0 +1,30 @@
+Shuffle sharding: each customer gets k of n workers, picked at random.
+For one other customer, how many of your k workers do they also have?
+
+n=8 k=2  shards=28
+  overlap 0 of 2: 53.5714%
+  overlap 1 of 2: 42.8571%
+  overlap 2 of 2: 3.57143%
+
+n=8 k=4  shards=70
+  overlap 0 of 4: 1.42857%
+  overlap 1 of 4: 22.8571%
+  overlap 2 of 4: 51.4286%
+  overlap 3 of 4: 22.8571%
+  overlap 4 of 4: 1.42857%
+
+n=100 k=5  shards=75287520
+  overlap 0 of 5: 76.959%
+  overlap 1 of 5: 21.1426%
+  overlap 2 of 5: 1.83849%
+  overlap 3 of 5: 0.059306%
+  overlap 4 of 5: 0.000630915%
+  overlap 5 of 5: 1.32824e-06%
+
+n=2048 k=4  shards=730862190080
+  overlap 0 of 4: 99.2205%
+  overlap 1 of 4: 0.777818%
+  overlap 2 of 4: 0.0017141%
+  overlap 3 of 4: 1.11868e-06%
+  overlap 4 of 4: 1.36825e-10%
+

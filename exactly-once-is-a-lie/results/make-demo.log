@@ -1,0 +1,65 @@
+go build -o bin/server ./cmd/server
+go build -o bin/client ./cmd/client
+waiting for server to start.... done
+server started
+date:     2026-11-04T07:31:47Z
+cpu:      Intel(R) Core(TM) i5-8257U CPU @ 1.40GHz
+ram:      8 GB
+os:       15.8.2
+go:       go1.22.6
+postgres: postgres (PostgreSQL) 17.11 (Homebrew)
+
+exactly-once-is-a-lie lab  go=go1.22.6  postgres=17.11 (Homebrew)  GOMAXPROCS=2
+burst: 500 keys x 20 concurrent duplicates (10 keys in flight)
+timeouts: 200 keys, client timeout 25ms, up to 3 retries
+mismatch: 50 keys reused with a different amount
+
+[none    burst   ]  2.18s  sent=10000 new=10000 replayed=0 409=0 422=0 5xx=0 client_timeouts=0 other=0
+                    money moved=10000 for 500 logical charges -> duplicate charges=9500  (db rows=10000, provider replays=0)
+[none    timeouts]  0.65s  sent=376 new=200 replayed=0 409=0 422=0 5xx=0 client_timeouts=176 other=0
+                    money moved=376 for 200 logical charges -> duplicate charges=176  (db rows=376, provider replays=0)
+[none    mismatch]  2.58s  sent=50 new=50 replayed=0 409=0 422=0 5xx=0 client_timeouts=0 other=0
+                    money moved=100 for 50 logical charges -> duplicate charges=50  (db rows=100, provider replays=0)
+
+[naive   burst   ]  2.27s  sent=10000 new=9974 replayed=26 409=0 422=0 5xx=0 client_timeouts=0 other=0
+                    money moved=9974 for 500 logical charges -> duplicate charges=9474  (db rows=9974, provider replays=0)
+[naive   timeouts]  0.41s  sent=342 new=106 replayed=94 409=0 422=0 5xx=0 client_timeouts=142 other=0
+                    money moved=248 for 200 logical charges -> duplicate charges=48  (db rows=248, provider replays=0)
+[naive   mismatch]  1.49s  sent=50 new=0 replayed=50 409=0 422=0 5xx=0 client_timeouts=0 other=0
+                    money moved=50 for 50 logical charges -> duplicate charges=0  (db rows=50, provider replays=0)
+
+[correct burst   ]  2.13s  sent=27044 new=500 replayed=9500 409=17044 422=0 5xx=0 client_timeouts=0 other=0
+                    money moved=500 for 500 logical charges -> duplicate charges=0  (db rows=500, provider replays=0)
+[correct timeouts]  0.32s  sent=333 new=98 replayed=102 409=31 422=0 5xx=0 client_timeouts=102 other=0
+                    money moved=200 for 200 logical charges -> duplicate charges=0  (db rows=200, provider replays=0)
+[correct mismatch]  1.49s  sent=50 new=0 replayed=0 409=0 422=50 5xx=0 client_timeouts=0 other=0
+                    money moved=50 for 50 logical charges -> duplicate charges=0  (db rows=50, provider replays=0)
+
+[outbox  burst   ]  2.12s  sent=27447 new=500 replayed=9500 409=17447 422=0 5xx=0 client_timeouts=0 other=0
+                    money moved=500 for 500 logical charges -> duplicate charges=0  (db rows=500, provider replays=0)
+                    outbox events=500 published=613 (relay crashes=34) receipts: naive consumer=613, dedupe consumer=500
+[outbox  timeouts]  0.35s  sent=360 new=88 replayed=112 409=48 422=0 5xx=0 client_timeouts=112 other=0
+                    money moved=200 for 200 logical charges -> duplicate charges=0  (db rows=200, provider replays=0)
+                    outbox events=200 published=243 (relay crashes=7) receipts: naive consumer=243, dedupe consumer=200
+[outbox  mismatch]  1.55s  sent=50 new=0 replayed=0 409=0 422=50 5xx=0 client_timeouts=0 other=0
+                    money moved=50 for 50 logical charges -> duplicate charges=0  (db rows=50, provider replays=0)
+                    outbox events=50 published=64 (relay crashes=14) receipts: naive consumer=64, dedupe consumer=50
+
+SUMMARY (duplicate charges = times money moved minus logical charges)
+mode     scenario    requests  money_moved      dupes   rejected receipts_naive receipts_dedup
+none     burst          10000        10000       9500          0              0              0
+none     timeouts         376          376        176          0              0              0
+none     mismatch          50          100         50          0              0              0
+naive    burst          10000         9974       9474          0              0              0
+naive    timeouts         342          248         48          0              0              0
+naive    mismatch          50           50          0          0              0              0
+correct  burst          27044          500          0          0              0              0
+correct  timeouts         333          200          0          0              0              0
+correct  mismatch          50           50          0         50              0              0
+outbox   burst          27447          500          0          0            613            500
+outbox   timeouts         360          200          0          0            243            200
+outbox   mismatch          50           50          0         50             64             50
+
+total 20.6s
+waiting for server to shut down.... done
+server stopped

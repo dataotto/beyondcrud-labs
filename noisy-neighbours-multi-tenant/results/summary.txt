@@ -1,0 +1,36 @@
+mode=fifo workers=8 job=20ms
+window   tenants   offered    p50_ms    p99_ms  rejected
+before   A-E          1458      20.3      28.2      0.0%
+before   X             434      20.3      25.6      0.0%
+burst    A-E          1559    1969.2    4133.6      0.0%
+burst    X            4006    1969.8    4117.8      0.0%
+after    A-E          1509    1635.1    4127.4      0.0%
+after    X             393    1601.6    4109.1      0.0%
+
+mode=global workers=8 job=20ms
+window   tenants   offered    p50_ms    p99_ms  rejected
+before   A-E          1458      20.2      28.4      0.0%
+before   X             434      20.2      26.3      0.0%
+burst    A-E          1559      20.5      87.9     34.0%
+burst    X            4006      20.4      87.1     35.1%
+after    A-E          1509      20.2      24.6      0.1%
+after    X             393      20.2      24.4      0.0%
+
+mode=pertenant workers=8 job=20ms
+window   tenants   offered    p50_ms    p99_ms  rejected
+before   A-E          1458      20.2      27.9      0.0%
+before   X             434      20.2      25.5      0.0%
+burst    A-E          1559      20.2      31.6      0.0%
+burst    X            4006      20.2      42.9     74.7%
+after    A-E          1509      20.3      24.6      0.0%
+after    X             393      20.3      23.9      0.3%
+
+mode=fair workers=8 job=20ms
+window   tenants   offered    p50_ms    p99_ms  rejected
+before   A-E          1458      20.3      27.4      0.0%
+before   X             434      20.3      28.8      0.0%
+burst    A-E          1559      30.1      49.0      0.0%
+burst    X            4006     423.6     552.1     38.7%
+after    A-E          1509      20.2      35.1      0.0%
+after    X             393      20.3     321.6      0.0%
+

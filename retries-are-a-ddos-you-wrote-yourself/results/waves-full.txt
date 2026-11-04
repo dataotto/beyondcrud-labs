@@ -1,0 +1,4 @@
+jitter=full, 400 requests at once, db fails for the first 1s, backoff 100ms base, 1s cap
+db received 2376 (1976 retries)
+peak retry arrivals in one 10ms slot  117
+succeeded 397/400, p50 done at 1251ms, last done at 2016ms

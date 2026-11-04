@@ -1,0 +1,1 @@
+staging   ALTER TABLE accounts ADD COLUMN note text NOT NULL DEFAULT '' on 10000 rows, no traffic: 4.16ms

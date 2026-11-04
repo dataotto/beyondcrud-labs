@@ -1,0 +1,6 @@
+mode=fixed, db returns 500 to everything, 20 client requests
+client attempts  20
+edge received    20
+api received     20
+db received      21
+db per request   1.1x

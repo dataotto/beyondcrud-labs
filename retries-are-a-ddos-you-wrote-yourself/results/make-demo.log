@@ -1,0 +1,62 @@
+go vet ./...
+go build -o bin/retrylab .
+GOMAXPROCS=2 ./bin/retrylab -scenario amp -mode naive | tee results/amp-naive.txt
+mode=naive, db returns 500 to everything, 20 client requests
+client attempts  60
+edge received    60
+api received     180
+db received      540
+db per request   27.0x
+GOMAXPROCS=2 ./bin/retrylab -scenario amp -mode fixed | tee results/amp-fixed.txt
+mode=fixed, db returns 500 to everything, 20 client requests
+client attempts  20
+edge received    20
+api received     20
+db received      21
+db per request   1.1x
+GOMAXPROCS=2 ./bin/retrylab -scenario waves -jitter none | tee results/waves-none.txt
+jitter=none, 400 requests at once, db fails for the first 1s, backoff 100ms base, 1s cap
+db received 2000 (1600 retries)
+peak retry arrivals in one 10ms slot  178
+succeeded 400/400, p50 done at 1644ms, last done at 1707ms
+GOMAXPROCS=2 ./bin/retrylab -scenario waves -jitter full | tee results/waves-full.txt
+jitter=full, 400 requests at once, db fails for the first 1s, backoff 100ms base, 1s cap
+db received 2376 (1976 retries)
+peak retry arrivals in one 10ms slot  117
+succeeded 397/400, p50 done at 1251ms, last done at 2016ms
+GOMAXPROCS=2 ./bin/retrylab -scenario storm -mode naive | tee results/storm-naive.txt
+mode=naive rate=20/s load=20s slowdown=6s..9s (db work 20ms -> 500ms)
+client requests      400
+client attempts      941
+edge received        941
+api received         2563
+db received          7371
+amplification at db  18.4x
+success rate         32.5%
+latency all   p50 3200ms  p99 3205ms
+latency ok    p50 23ms  p99 992ms
+peak db rps          758
+db work finished for a caller that had left  3200
+db rejected (queue full)                     4036
+db dropped (deadline passed)                 0
+duplicate writes applied                     641
+circuit breaker opened                       0 times, 0 fast fails
+recovery             did not recover before load stopped
+GOMAXPROCS=2 ./bin/retrylab -scenario storm -mode fixed | tee results/storm-fixed.txt
+mode=fixed rate=20/s load=20s slowdown=6s..9s (db work 20ms -> 500ms)
+client requests      400
+client attempts      400
+edge received        400
+api received         400
+db received          378
+amplification at db  0.9x
+success rate         85.5%
+latency all   p50 23ms  p99 1002ms
+latency ok    p50 23ms  p99 801ms
+peak db rps          20
+db work finished for a caller that had left  0
+db rejected (queue full)                     0
+db dropped (deadline passed)                 36
+duplicate writes applied                     0
+circuit breaker opened                       18 times, 22 fast fails
+recovery             2s after the slowdown ended

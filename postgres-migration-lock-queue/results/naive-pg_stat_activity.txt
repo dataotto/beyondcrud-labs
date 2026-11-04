@@ -1,0 +1,43 @@
+-- snapshot at t=5.0s, mode=naive
+
+SELECT pid, application_name AS app, state, coalesce(wait_event_type, '') AS wait,
+       pg_blocking_pids(pid)::text AS blocked_by,
+       coalesce(round(extract(epoch FROM now() - xact_start) * 1000)::text, '') AS xact_ms,
+       left(regexp_replace(query, '\s+', ' ', 'g'), 60) AS query
+FROM pg_stat_activity
+WHERE datname = current_database() AND application_name IN ('api', 'report', 'migration')
+ORDER BY xact_start NULLS LAST, pid;
+
+pid    app        state                wait    blocked_by  xact_ms  query
+22786  report     idle in transaction  Client  {}          3001     SELECT count(*) FROM accounts
+22787  migration  active               Lock    {22786}     2007     ALTER TABLE accounts ADD COLUMN note text NOT NULL DEFAULT '
+22770  api        active               Lock    {22787}     2003     UPDATE accounts SET balance = balance + 1 WHERE id = $1
+22781  api        active               Lock    {22787}     2003     SELECT balance FROM accounts WHERE id = $1
+22767  api        active               Lock    {22787}     2003     UPDATE accounts SET balance = balance + 1 WHERE id = $1
+22780  api        active               Lock    {22787}     2003     UPDATE accounts SET balance = balance + 1 WHERE id = $1
+22772  api        active               Lock    {22787}     2003     SELECT balance FROM accounts WHERE id = $1
+22776  api        active               Lock    {22787}     2003     UPDATE accounts SET balance = balance + 1 WHERE id = $1
+22777  api        active               Lock    {22787}     2003     SELECT balance FROM accounts WHERE id = $1
+22784  api        active               Lock    {22787}     2003     UPDATE accounts SET balance = balance + 1 WHERE id = $1
+22775  api        active               Lock    {22787}     2003     SELECT balance FROM accounts WHERE id = $1
+22768  api        active               Lock    {22787}     2003     SELECT balance FROM accounts WHERE id = $1
+... 10 more rows (22 total)
+
+SELECT mode, granted, count(*)
+FROM pg_locks
+WHERE relation = 'accounts'::regclass
+GROUP BY mode, granted
+ORDER BY granted DESC, mode;
+
+mode                 granted  count
+AccessShareLock      true     1
+AccessExclusiveLock  false    1
+AccessShareLock      false    13
+RowExclusiveLock     false    7
+
+SELECT count(*) FILTER (WHERE wait_event_type = 'Lock') AS waiting_on_lock,
+       count(*) AS api_sessions
+FROM pg_stat_activity WHERE application_name = 'api';
+
+waiting_on_lock  api_sessions
+20               20

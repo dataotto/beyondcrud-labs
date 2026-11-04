@@ -1,0 +1,17 @@
+mode=fixed rate=20/s load=20s slowdown=6s..9s (db work 20ms -> 500ms)
+client requests      400
+client attempts      400
+edge received        400
+api received         400
+db received          378
+amplification at db  0.9x
+success rate         85.5%
+latency all   p50 23ms  p99 1002ms
+latency ok    p50 23ms  p99 801ms
+peak db rps          20
+db work finished for a caller that had left  0
+db rejected (queue full)                     0
+db dropped (deadline passed)                 36
+duplicate writes applied                     0
+circuit breaker opened                       18 times, 22 fast fails
+recovery             2s after the slowdown ended

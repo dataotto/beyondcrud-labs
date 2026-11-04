@@ -1,0 +1,6 @@
+mode=naive, db returns 500 to everything, 20 client requests
+client attempts  60
+edge received    60
+api received     180
+db received      540
+db per request   27.0x
